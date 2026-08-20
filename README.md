@@ -398,33 +398,6 @@ The recommendations should be used as guidance. Actual crop selection should als
 
 ---
 
-## 🤝 Contributing
-
-Contributions and suggestions are welcome.
-
-1. Fork the repository.
-2. Create a new branch.
-
-```bash
-git checkout -b feature-name
-```
-
-3. Make your changes.
-4. Commit your changes.
-
-```bash
-git commit -m "Add new feature"
-```
-
-5. Push your changes.
-
-```bash
-git push origin feature-name
-```
-
-6. Create a Pull Request.
-
----
 
 
 ## 🌱 Project Goal
