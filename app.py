@@ -2380,4 +2380,8 @@ with st.expander("📋 View Alternative Crop Recommendations"):
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
 st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+<<<<<<< Updated upstream
 st.markdown(f"<div class='footer'>{t['footer']}</div>", unsafe_allow_html=True)
+=======
+st.markdown(f"<div class='footer'>{t['footer']}</div>", unsafe_allow_html=True)
+>>>>>>> Stashed changes
