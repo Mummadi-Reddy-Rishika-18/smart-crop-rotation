@@ -1,294 +1,436 @@
-🌱 Smart Crop Rotation
-Optimal Crop Selection and Rotation Planning
+# 🌱 Smart Crop Rotation
 
-Smart Crop Rotation is a data-driven crop planning and decision-support application designed to help farmers select suitable crops and plan crop rotations based on farm conditions.
+## AI-Assisted Crop Rotation Planning for Sustainable Farming
 
-Instead of repeatedly growing the same crop based only on habit, the application evaluates factors such as soil type, water availability, rainfall availability, season, current crop, and previous crop to recommend a suitable next crop and generate a 4-year crop rotation plan.
+Smart Crop Rotation is a **Streamlit-based agricultural decision-support application** that helps farmers choose suitable crops for their next cultivation cycle.
 
-🎯 Problem Statement
+The system analyzes farm conditions such as **soil type, water availability, current crop, and previous crop** and generates a smart crop rotation recommendation. It also provides crop information, alternative recommendations, farm insights, multilingual support, and a downloadable farm report.
 
-Farmers often choose crops based on traditional practices or habit rather than considering current soil and environmental conditions. This can affect crop diversity, resource management, and long-term soil health.
+---
 
-Our Solution
+## 🚀 Features
 
-Smart Crop Rotation provides a simple interface where farmers can enter their farm conditions and receive:
+* 🌱 Smart crop recommendation
+* 🔄 Crop rotation planning
+* 📊 Recommendation scoring system
+* 🪴 Soil compatibility analysis
+* 💧 Water availability analysis
+* 🌾 Crop diversity suggestions
+* 🌱 Soil health insights
+* 📋 Alternative crop recommendations
+* 🌍 Multilingual support
+* 📥 Downloadable farm report
+* 🎨 Modern and attractive Streamlit dashboard
 
-🌱 Recommended next crop
-📊 Crop suitability score
-💧 Water suitability
-🌧️ Rainfall suitability
-🪴 Soil suitability
-🌱 Soil-health contribution
-🌾 Crop-diversification score
-🔄 4-year crop rotation plan
-📈 Soil-health trend
-💡 Farming insights
-📄 Downloadable farm report
-✨ Key Features
-🌱 1. Crop Recommendation
+---
 
-The application evaluates candidate crops using a scoring system based on:
+## 🌾 Supported Crops
 
-Water availability
-Rainfall availability
-Soil type
-Season
-Soil-health contribution
-Crop diversification
-Previous crop
-Current crop repetition
+The application currently supports the following crops:
 
-Crops are ranked according to their total suitability score, and the highest-ranked crop is recommended.
+* Rice
+* Wheat
+* Maize
+* Cotton
+* Groundnut
+* Soybean
+* Chickpea
+* Green Gram
+* Black Gram
+* Mustard
+* Sorghum
 
-🔄 2. Four-Year Crop Rotation
+Each crop contains information about:
 
-The application generates a 4-year crop rotation plan rather than recommending only a single crop.
+* Water requirement
+* Nutrient requirement
+* Suitable soil type
+* Growing season
+* Recommended next crops
+* Soil health benefits
 
-The rotation encourages:
+---
 
-Crop diversity
-Reduced repeated cropping
-Inclusion of legume crops
-Better resource management
-Long-term soil-health awareness
+## 🌍 Supported Languages
 
-The application also displays a soil-health trend for the four-year rotation.
+The application supports:
 
-Note: The soil-health trend is a heuristic estimate and is not a replacement for actual soil testing.
+* 🇬🇧 English
+* 🇮🇳 Kannada
+* 🇮🇳 Hindi
+* 🇮🇳 Telugu
+* 🇮🇳 Tamil
 
-🌦️ 3. Location-Based Temperature
+The interface, crop names, soil types, water levels, recommendations, and farming insights are translated to make the application more accessible to farmers.
 
-Farmers can enter a village, district, or city.
+---
 
-The application:
+## 🪴 Supported Soil Types
 
-Converts the location into latitude and longitude using Open-Meteo's geocoding service.
-Retrieves the current temperature.
-Displays the temperature in the application dashboard.
+* Loamy Soil
+* Clay Soil
+* Black Soil
+* Sandy Soil
+* Red Soil
 
-No API key is required for this implementation.
+---
 
-🪴 4. Soil and Water Analysis
+## 💧 Water Availability Levels
 
-The application considers different soil conditions and water availability levels.
+The farmer can select:
 
-Water availability:
+* Low
+* Medium
+* High
 
-Low
-Medium
-High
+The recommendation system considers the available water level while suggesting suitable crops.
 
-Soil types include:
+---
 
-Loamy Soil
-Clay Soil
-Black Soil
-Sandy Soil
-Red Soil
+## 🧠 How It Works
 
-These conditions contribute to the crop suitability score.
+The application follows this workflow:
 
-🌱 5. Soil Health and Legume Rotation
+```text
+Farmer Details
+      ↓
+Soil Type Selection
+      ↓
+Water Availability
+      ↓
+Current Crop Selection
+      ↓
+Previous Crop Analysis
+      ↓
+Crop Compatibility Analysis
+      ↓
+Recommendation Scoring
+      ↓
+Best Crop Recommendation
+      ↓
+Crop Rotation + Insights + Report
+```
 
-Legume crops receive a soil-health contribution in the scoring system.
+The recommendation system evaluates different crops based on compatibility with the selected farm conditions.
 
-The application uses crop diversification and legume information when evaluating rotations.
+---
 
-This helps encourage rotations containing crops such as pulses and legumes.
+## 📊 Recommendation Factors
 
-📊 6. Farm Performance Dashboard
+The crop recommendation is generated using factors such as:
 
-The dashboard displays estimated indicators including:
+* 💧 Water compatibility
+* 🪴 Soil compatibility
+* 🌱 Soil health benefit
+* 🌾 Crop diversity
+* 🔄 Crop rotation suitability
 
-💧 Water Usage
-🌱 Soil Health
-📈 Expected Yield
-♻️ Sustainability Score
+The system displays a recommendation score and score breakdown to help users understand the suggested crop.
 
-These are calculated using the application's scoring and heuristic formulas. They should be treated as decision-support indicators, not guaranteed agricultural predictions.
+---
 
-🌍 7. Multilingual Support
+## 🔄 Crop Rotation
 
-The application supports five languages:
+Crop rotation helps improve sustainable farming practices by encouraging different types of crops in consecutive seasons.
 
-🇬🇧 English
-🇮🇳 Kannada
-🇮🇳 Hindi
-🇮🇳 Telugu
-🇮🇳 Tamil
+For example:
 
-This helps make the application more accessible to farmers from different language backgrounds.
+```text
+🌾 Rice
+   ↓
+🌱 Green Gram
+   ↓
+🌽 Maize
+   ↓
+🥜 Groundnut
+```
 
-📄 8. Downloadable Farm Report
+Including legumes and pulses in crop rotation can help support soil fertility and crop diversity.
 
-Users can generate a report containing:
+---
 
-Farmer details
-Farm location
-Temperature
-Land size
-Soil type
-Water availability
-Crop information
-Recommended crop
-Recommendation score
-Rotation plan
-General farming advice
+## 👨‍🌾 How to Use the Application
 
-🧠 Recommendation Method
+1. Select your preferred language.
+2. Enter the farmer's name.
+3. Enter the farm location.
+4. Enter the land size in acres.
+5. Select the soil type.
+6. Select the available water level.
+7. Select the current crop.
+8. Select the previous crop if known.
+9. Click **Generate Rotation Plan**.
+10. View the recommended crop.
+11. Check the recommendation score and score breakdown.
+12. View the suggested crop rotation.
+13. Explore alternative crop recommendations.
+14. Read farm insights and recommendations.
+15. Download the farm report.
 
-The application uses a rule-based scoring approach.
+---
 
-The overall crop score is calculated from multiple factors:
+## 🛠️ Technologies Used
 
-Total Score =
-    Water Score
-  + Rainfall Score
-  + Soil Score
-  + Soil Health Score
-  + Season Score
-  + Diversification Score
-  - Previous Crop Penalty
-  - Same Crop Penalty
+| Technology    | Purpose                       |
+| ------------- | ----------------------------- |
+| 🐍 Python     | Core programming language     |
+| 🎈 Streamlit  | Web application framework     |
+| 🐼 Pandas     | Data processing               |
+| 🌐 Requests   | HTTP requests                 |
+| 🎨 HTML & CSS | Custom user interface styling |
 
-The candidate crops are then sorted according to their scores.
+---
 
-The highest-ranked crop becomes the recommended next crop.
+## 📁 Project Structure
 
-🔄 How the Application Works
-             FARM DETAILS
-                  │
-                  ▼
-          Location & Temperature
-                  │
-                  ▼
-        Soil + Water Conditions
-                  │
-                  ▼
-       Current & Previous Crop
-                  │
-                  ▼
-       Crop Suitability Scoring
-                  │
-                  ▼
-        Rank Candidate Crops
-                  │
-                  ▼
-       Recommended Next Crop
-                  │
-                  ▼
-          4-Year Rotation
-                  │
-                  ▼
-      Soil Health & Farm Insights
-                  │
-                  ▼
-          Downloadable Report
-🛠️ Technologies Used
-Programming Language
-Python
-Framework
-Streamlit
-Libraries
-Pandas
-Requests
-APIs
-Open-Meteo Geocoding API
-Open-Meteo Weather API
-Core Approach
-Rule-based crop suitability scoring
-Crop rotation planning
-Soil-health heuristics
-Water compatibility scoring
-Rainfall compatibility scoring
-Crop diversification scoring
-📦 Installation
-1. Clone the repository
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd <YOUR_PROJECT_FOLDER>
-2. Install dependencies
-pip install streamlit pandas requests
-3. Run the application
+```text
+smart-crop-rotation/
+│
+├── app.py
+├── requirements.txt
+└── README.md
+```
+
+### `app.py`
+
+The main application file contains:
+
+* Streamlit interface
+* Custom CSS styling
+* Crop database
+* Translation system
+* Recommendation logic
+* Crop scoring system
+* Crop rotation planning
+* Farm insights
+* Report generation
+
+---
+
+## ⚙️ Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/smart-crop-rotation.git
+```
+
+### 2. Open the Project Folder
+
+```bash
+cd smart-crop-rotation
+```
+
+### 3. Create a Virtual Environment
+
+```bash
+python -m venv venv
+```
+
+### 4. Activate the Virtual Environment
+
+#### Windows
+
+```bash
+venv\Scripts\activate
+```
+
+#### macOS/Linux
+
+```bash
+source venv/bin/activate
+```
+
+### 5. Install Required Packages
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 📦 Requirements
+
+Create a file named `requirements.txt` and add:
+
+```text
+streamlit
+pandas
+requests
+```
+
+Install all dependencies using:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## ▶️ Run the Application
+
+Run the following command:
+
+```bash
 streamlit run app.py
-👨‍🌾 How to Use
-Enter the farmer's name.
-Enter the farm location.
-Enter the land size.
-Select the soil type.
-Select water availability.
-Select the current crop.
-Select the previous crop if known.
-Click Generate Rotation Plan.
-View the recommended crop.
-Check the suitability score and score breakdown.
-View the 4-year rotation.
-Review farm insights.
-Download the farm report.
+```
 
-These steps are also reflected in the application's built-in instructions.
+After running the command, Streamlit will open the application in your browser.
 
-🌾 Expected Impact
+---
 
-Smart Crop Rotation aims to support farmers in making more informed crop-planning decisions.
+## 📥 Farm Report
 
-Potential benefits
-Better crop selection
-Improved crop diversity
-Better water-resource awareness
-More structured crop rotation
-Improved awareness of soil health
-Reduced dependence on repeated cropping
-More sustainable farm planning
-⚠️ Disclaimer
+The application allows users to download a farm report containing:
 
-Smart Crop Rotation is a decision-support application.
+* Farmer details
+* Farm location
+* Land size
+* Soil type
+* Water availability
+* Current crop information
+* Recommended next crop
+* Recommendation score
+* Suggested crop rotation
+* General farming advice
 
-Its crop recommendations, soil-health scores, sustainability scores, and yield estimates are based on the application's crop data and heuristic scoring methods.
+---
 
-They should not be considered guaranteed predictions.
+## 💡 Farm Insights
 
-Farmers should also consider:
+The application provides useful farming insights based on the selected conditions.
 
-Local climate
-Actual rainfall
-Market prices
-Seed availability
-Irrigation facilities
-Pest and disease conditions
-Local farming practices
-Advice from agricultural experts
-🔮 Future Enhancements
+### 💧 Low Water Availability
 
-Future versions could include:
+The system recommends crops that require less water, such as:
 
-🧪 Real-time NPK/soil sensor integration
-🌧️ Detailed weather forecasting
-🛰️ Satellite-based crop monitoring
-🤖 Machine-learning-based prediction
-💰 Live crop-market price integration
-🐛 Pest and disease prediction
-📍 Region-specific crop recommendations
-📱 Mobile application
-🗣️ Voice-based farmer assistance
-📈 Historical farm data and analytics
-🏆 Problem Statement Alignment
-Problem Requirement	Smart Crop Rotation
-Optimal crop selection	✅
-Consider soil conditions	✅
-Consider environmental conditions	✅
-Crop rotation planning	✅
-Improve crop diversity	✅
-Consider water availability	✅
-Support soil health	✅
-Farmer-friendly interface	✅
-Multi-language support	✅
-Report generation	✅
-Conclusion
+* Chickpea
+* Green Gram
+* Sorghum
 
-Smart Crop Rotation directly addresses the problem of optimal crop selection and rotation planning by combining farm-condition inputs with a transparent crop-scoring system and multi-year rotation planning.
+### 🌱 Soil Health
 
-🌱 Vision
+Legume crops can help improve soil fertility by contributing to nitrogen fixation.
 
-Smart Farming for a Better Tomorrow
+Examples include:
 
-Helping farmers make better-informed, sustainable crop-planning decisions through simple and accessible technology.
+* Groundnut
+* Soybean
+* Chickpea
+* Green Gram
+* Black Gram
+
+### 🌾 Crop Diversity
+
+Crop rotation can help reduce dependency on a single crop and may help break certain pest and disease cycles.
+
+---
+
+## 🚀 Future Improvements
+
+Future versions of the project can include:
+
+### 🤖 Machine Learning
+
+Use real agricultural datasets to train machine learning models for more accurate crop recommendations.
+
+### 🌦️ Weather Integration
+
+Integrate real-time data such as:
+
+* Rainfall
+* Temperature
+* Humidity
+* Weather forecasts
+
+### 📍 Location-Based Recommendations
+
+Provide crop suggestions based on:
+
+* Region
+* Climate
+* Rainfall patterns
+* Seasonal conditions
+
+### 🧪 IoT Soil Monitoring
+
+Integrate sensors to collect:
+
+* Soil moisture
+* Soil pH
+* Temperature
+* Humidity
+* NPK values
+
+### 📈 Market Price Integration
+
+Consider current crop market prices to help farmers make economically beneficial decisions.
+
+### 📱 Mobile Application
+
+Develop a mobile-friendly version for easier access by farmers.
+
+### 🌾 Expanded Crop Database
+
+Add more:
+
+* Crops
+* Soil types
+* Fertilizer recommendations
+* Pest management information
+* Regional farming practices
+
+---
+
+## ⚠️ Disclaimer
+
+This application is designed as an **agricultural decision-support tool**.
+
+The recommendations should be used as guidance. Actual crop selection should also consider:
+
+* Local climate
+* Rainfall
+* Market prices
+* Seed availability
+* Irrigation facilities
+* Pest and disease conditions
+* Advice from agricultural experts
+
+---
+
+## 🤝 Contributing
+
+Contributions and suggestions are welcome.
+
+1. Fork the repository.
+2. Create a new branch.
+
+```bash
+git checkout -b feature-name
+```
+
+3. Make your changes.
+4. Commit your changes.
+
+```bash
+git commit -m "Add new feature"
+```
+
+5. Push your changes.
+
+```bash
+git push origin feature-name
+```
+
+6. Create a Pull Request.
+
+---
+
+
+## 🌱 Project Goal
+
+> **Helping farmers make smarter crop rotation decisions for healthier soil, efficient water management, and sustainable farming.**
+
+---
+
+### ⭐ If you like this project, consider giving the repository a star!
