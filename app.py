@@ -392,6 +392,7 @@ crop_data = {
     "Rice": {
         "water": "High",
         "nutrient": "High",
+        "n": "High", "p": "Medium", "k": "High",
         "soil": ["Clay", "Loamy"],
         "season": ["Kharif"],
         "next": ["Green Gram", "Black Gram", "Groundnut"],
@@ -402,6 +403,7 @@ crop_data = {
     "Wheat": {
         "water": "Medium",
         "nutrient": "Medium",
+        "n": "Medium", "p": "Medium", "k": "Medium",
         "soil": ["Loamy"],
         "season": ["Rabi"],
         "next": ["Chickpea", "Green Gram", "Mustard"],
@@ -412,6 +414,7 @@ crop_data = {
     "Maize": {
         "water": "Medium",
         "nutrient": "High",
+        "n": "High", "p": "Medium", "k": "High",
         "soil": ["Loamy", "Red Soil"],
         "season": ["Kharif", "Rabi"],
         "next": ["Soybean", "Green Gram", "Groundnut"],
@@ -422,6 +425,7 @@ crop_data = {
     "Cotton": {
         "water": "Medium",
         "nutrient": "High",
+        "n": "High", "p": "Medium", "k": "High",
         "soil": ["Black Soil"],
         "season": ["Kharif"],
         "next": ["Chickpea", "Wheat", "Green Gram"],
@@ -432,6 +436,7 @@ crop_data = {
     "Groundnut": {
         "water": "Medium",
         "nutrient": "Medium",
+        "n": "Low", "p": "Medium", "k": "Medium",
         "soil": ["Sandy", "Loamy", "Red Soil"],
         "season": ["Kharif"],
         "next": ["Wheat", "Maize", "Sorghum"],
@@ -442,6 +447,7 @@ crop_data = {
     "Soybean": {
         "water": "Medium",
         "nutrient": "Medium",
+        "n": "Low", "p": "Medium", "k": "Medium",
         "soil": ["Loamy", "Black Soil"],
         "season": ["Kharif"],
         "next": ["Wheat", "Maize", "Sorghum"],
@@ -452,6 +458,7 @@ crop_data = {
     "Chickpea": {
         "water": "Low",
         "nutrient": "Low",
+        "n": "Low", "p": "Low", "k": "Low",
         "soil": ["Loamy", "Black Soil"],
         "season": ["Rabi"],
         "next": ["Maize", "Cotton", "Sorghum"],
@@ -462,6 +469,7 @@ crop_data = {
     "Green Gram": {
         "water": "Low",
         "nutrient": "Low",
+        "n": "Low", "p": "Low", "k": "Low",
         "soil": ["Sandy", "Loamy", "Red Soil"],
         "season": ["Kharif", "Summer"],
         "next": ["Wheat", "Rice", "Maize"],
@@ -472,6 +480,7 @@ crop_data = {
     "Black Gram": {
         "water": "Low",
         "nutrient": "Low",
+        "n": "Low", "p": "Low", "k": "Low",
         "soil": ["Loamy", "Black Soil"],
         "season": ["Kharif", "Rabi"],
         "next": ["Rice", "Wheat", "Maize"],
@@ -482,6 +491,7 @@ crop_data = {
     "Mustard": {
         "water": "Low",
         "nutrient": "Medium",
+        "n": "Medium", "p": "Medium", "k": "Medium",
         "soil": ["Loamy", "Black Soil"],
         "season": ["Rabi"],
         "next": ["Green Gram", "Maize", "Cotton"],
@@ -492,6 +502,7 @@ crop_data = {
     "Sorghum": {
         "water": "Low",
         "nutrient": "Medium",
+        "n": "Medium", "p": "Low", "k": "Medium",
         "soil": ["Black Soil", "Loamy", "Red Soil"],
         "season": ["Kharif", "Rabi"],
         "next": ["Chickpea", "Groundnut", "Green Gram"],
@@ -1236,13 +1247,45 @@ def soil_score(selected_soil, suitable_soils):
     return 0
 
 
+def npk_score(soil_n, soil_p, soil_k, crop_n, crop_p, crop_k, is_legume):
+    """
+    Score how well the crop's NPK demand matches available soil nutrients.
+    Matching levels score higher. Legumes get an extra N bonus because they
+    fix atmospheric nitrogen (they need less soil N).
+    Returns 0-6.
+    """
+    level_map = {"Low": 0, "Medium": 1, "High": 2}
+
+    def match(soil_level, crop_level):
+        s = level_map.get(soil_level, 1)
+        c = level_map.get(crop_level, 1)
+        diff = abs(s - c)
+        if diff == 0:
+            return 2
+        if diff == 1:
+            return 1
+        return 0
+
+    n_pts = match(soil_n, crop_n)
+    # Legumes fix N → they tolerate low soil N better
+    if is_legume and soil_n == "Low":
+        n_pts = max(n_pts, 2)
+    p_pts = match(soil_p, crop_p)
+    k_pts = match(soil_k, crop_k)
+
+    return n_pts + p_pts + k_pts  # 0-6
+
+
 def calculate_recommendations(
     current_crop,
     previous_crop,
     soil_type,
     water_availability,
     preferred_season=None,
-    rainfall_availability="Medium"
+    rainfall_availability="Medium",
+    soil_n="Medium",
+    soil_p="Medium",
+    soil_k="Medium",
 ):
 
     current_info = crop_data[current_crop]
@@ -1278,6 +1321,18 @@ def calculate_recommendations(
         s_score = soil_score(
             soil_type,
             info["soil"]
+        )
+
+        # -------------------------
+        # NPK SCORE
+        # -------------------------
+
+        npk_s = npk_score(
+            soil_n, soil_p, soil_k,
+            info.get("n", "Medium"),
+            info.get("p", "Medium"),
+            info.get("k", "Medium"),
+            info["legume"]
         )
 
         # -------------------------
@@ -1320,6 +1375,7 @@ def calculate_recommendations(
             w_score
             + r_score
             + s_score
+            + npk_s
             + legume_score
             + season_score
             + diversification_score
@@ -1333,10 +1389,14 @@ def calculate_recommendations(
             "Water Score": w_score,
             "Rainfall Score": r_score,
             "Soil Score": s_score,
+            "NPK Score": npk_s,
             "Soil Health": legume_score,
             "Season Score": season_score,
             "Diversification": diversification_score,
             "Water Requirement": info["water"],
+            "N": info.get("n", "Medium"),
+            "P": info.get("p", "Medium"),
+            "K": info.get("k", "Medium"),
             "Suitable Soil": info["soil"],
             "Season": info["season"],
             "Reason": info["benefit"]
@@ -1355,7 +1415,10 @@ def calculate_repeat_score(
     soil_type,
     water_availability,
     preferred_season=None,
-    rainfall_availability="Medium"
+    rainfall_availability="Medium",
+    soil_n="Medium",
+    soil_p="Medium",
+    soil_k="Medium",
 ):
     """
     Scores what happens if the farmer plants the SAME crop again
@@ -1370,6 +1433,13 @@ def calculate_repeat_score(
     w_score = water_score(water_availability, info["water"])
     r_score = rainfall_score(rainfall_availability, info["water"])
     s_score = soil_score(soil_type, info["soil"])
+    npk_s = npk_score(
+        soil_n, soil_p, soil_k,
+        info.get("n", "Medium"),
+        info.get("p", "Medium"),
+        info.get("k", "Medium"),
+        info["legume"]
+    )
     legume_score = 3 if info["legume"] else 0
     season_score = (
         3 if preferred_season and preferred_season in info["season"] else 0
@@ -1381,6 +1451,7 @@ def calculate_repeat_score(
         w_score
         + r_score
         + s_score
+        + npk_s
         + legume_score
         + season_score
         + diversification_score
@@ -1393,6 +1464,7 @@ def calculate_repeat_score(
         "Water Score": w_score,
         "Rainfall Score": r_score,
         "Soil Score": s_score,
+        "NPK Score": npk_s,
         "Soil Health": legume_score,
         "Season Score": season_score,
         "Diversification": diversification_score,
@@ -1813,6 +1885,26 @@ rainfall_display = st.sidebar.selectbox(
 )
 rainfall_availability = rainfall_options[rainfall_display_options.index(rainfall_display)]
 
+# --- Soil NPK (Nitrogen, Phosphorus, Potassium) ---
+npk_options = ["Low", "Medium", "High"]
+npk_display_options = [translated_value(x, language) for x in npk_options]
+
+st.sidebar.markdown("### 🧪 Soil Nutrients (NPK)")
+n_display = st.sidebar.selectbox(
+    "Nitrogen (N)", npk_display_options, index=1, key="soil_n_final"
+)
+soil_n = npk_options[npk_display_options.index(n_display)]
+
+p_display = st.sidebar.selectbox(
+    "Phosphorus (P)", npk_display_options, index=1, key="soil_p_final"
+)
+soil_p = npk_options[npk_display_options.index(p_display)]
+
+k_display = st.sidebar.selectbox(
+    "Potassium (K)", npk_display_options, index=1, key="soil_k_final"
+)
+soil_k = npk_options[npk_display_options.index(k_display)]
+
 season_options = ["Kharif", "Rabi", "Summer"]
 season_display_options = [t["all_seasons"]] + [translated_value(x, language) for x in season_options]
 season_display = st.sidebar.selectbox(
@@ -1866,6 +1958,9 @@ if generate:
         water_availability=water_availability,
         preferred_season=selected_season,
         rainfall_availability=rainfall_availability,
+        soil_n=soil_n,
+        soil_p=soil_p,
+        soil_k=soil_k,
     )
 
 recommendations = st.session_state.recommendations_final
@@ -1879,12 +1974,15 @@ if not recommendations:
         water_availability=water_availability,
         preferred_season=selected_season,
         rainfall_availability=rainfall_availability,
+        soil_n=soil_n,
+        soil_p=soil_p,
+        soil_k=soil_k,
     )
 
 best = recommendations[0]
 best_crop = best["Crop"]
 best_crop_display = translated_crop(best_crop, language)
-max_possible_score = 21  # 18 original + 3 possible from rainfall_score
+max_possible_score = 27  # previous 21 + up to 6 from NPK score
 suitability = max(0, min(100, round(best["Score"] / max_possible_score * 100)))
 
 # ---------------------------------------------------------
@@ -1896,6 +1994,9 @@ repeat = calculate_repeat_score(
     water_availability=water_availability,
     preferred_season=selected_season,
     rainfall_availability=rainfall_availability,
+    soil_n=soil_n,
+    soil_p=soil_p,
+    soil_k=soil_k,
 )
 repeat_suitability = max(0, min(100, round(repeat["Score"] / max_possible_score * 100)))
 
@@ -1996,16 +2097,19 @@ else:
 
 season_card_value = t["all_seasons"] if not selected_season else translated_value(selected_season, language)
 
+npk_summary = f"N:{translated_value(soil_n, language)} P:{translated_value(soil_p, language)} K:{translated_value(soil_k, language)}"
+
 top_cards = [
     ("🌱", t["soil_type"], translated_soil(soil_type, language)),
     ("💧", t["water"], translated_value(water_availability, language)),
     ("🌧️", "Rainfall", translated_value(rainfall_availability, language)),
+    ("🧪", "Soil NPK", npk_summary),
     ("🗓️", t["season"], season_card_value),
     ("🌤️", ui["temperature"], temperature_value),
     ("📍", t["location"], location_card_value),
 ]
 
-cols = st.columns(6, gap="medium")
+cols = st.columns(7, gap="medium")
 for col, (icon, label, value) in zip(cols, top_cards):
     with col:
         st.markdown(f"""
@@ -2051,6 +2155,8 @@ with left:
       <div class="rec-crop">{best_crop_display}</div>
       <div class="rec-line">🎯 <b>Suitability Score:</b> {suitability}%</div>
       <div class="rec-line">💧 <b>{t['water_requirement']}:</b> {translated_value(best['Water Requirement'], language)}</div>
+      <div class="rec-line">🧪 <b>NPK Demand:</b> N:{translated_value(best.get('N','Medium'), language)} · P:{translated_value(best.get('P','Medium'), language)} · K:{translated_value(best.get('K','Medium'), language)}</div>
+      <div class="rec-line">⚖️ <b>NPK Match Score:</b> {best.get('NPK Score', 0)} / 6</div>
       <div class="rec-line">🌱 <b>{t['suitable_soil']}:</b> {translated_soil_list(best['Suitable Soil'], language)}</div>
       <div class="rec-line">♻️ <b>{t['soil_health']}:</b> {best['Soil Health']} / 3</div>
       <div class="rec-line">💰 <b>{t['growing_season']}:</b> {translated_season_list(best['Season'], language)}</div>
@@ -2319,10 +2425,15 @@ with report_left:
         f"Farmer: {farmer_display}", f"Location: {location_card_value}", f"Temperature: {temperature_value}", f"Land Size: {land_size} acres",
         f"Soil Type: {translated_soil(soil_type, language)}", f"Water Availability: {translated_value(water_availability, language)}",
         f"Expected Rainfall: {translated_value(rainfall_availability, language)}",
+        f"Soil Nitrogen (N): {translated_value(soil_n, language)}",
+        f"Soil Phosphorus (P): {translated_value(soil_p, language)}",
+        f"Soil Potassium (K): {translated_value(soil_k, language)}",
         f"Season: {season_card_value}",
         f"Current Crop: {translated_crop(current_crop, language)}", f"Previous Crop: {previous_display}", "",
         f"Recommended Crop: {best_crop_display}", f"Suitability Score: {suitability}%",
         f"Water Requirement: {translated_value(best['Water Requirement'], language)}",
+        f"Crop NPK Demand: N={translated_value(best.get('N','Medium'), language)}, P={translated_value(best.get('P','Medium'), language)}, K={translated_value(best.get('K','Medium'), language)}",
+        f"NPK Match Score: {best.get('NPK Score', 0)} / 6",
         f"Suitable Soil: {translated_soil_list(best['Suitable Soil'], language)}",
         f"Growing Season: {translated_season_list(best['Season'], language)}", f"Reason: {translated_benefit(best_crop, language)}", "",
         "HABIT VS RECOMMENDED", "-" * 40,
@@ -2330,10 +2441,10 @@ with report_left:
         f"If you follow the recommendation ({best_crop_display}): {suitability}% suitability ({RISK_TEXT[recommended_risk]} of declining yield/soil health)",
         f"Gap: {gap_word}{suitability_gap} points in favor of the recommendation" if suitability_gap != 0 else "Gap: no difference for this combination",
         "", "MODEL NOTE", "-" * 40,
-        "This report uses a rule-based scoring engine (Furrow). The same",
-        "recommendation can also be produced by SmartCrop, a Random Forest",
-        "model trained on soil and climate features, as an ML-backed",
-        "alternative to this rule-based engine.",
+        "This report uses a rule-based scoring engine (Furrow) that now also",
+        "considers soil Nitrogen, Phosphorus and Potassium (NPK) balance.",
+        "The same recommendation can also be produced by SmartCrop, a Random",
+        "Forest model trained on soil and climate features.",
         "",
         "4-YEAR ROTATION PLAN"
     ]
@@ -2372,6 +2483,10 @@ with st.expander("📋 View Alternative Crop Recommendations"):
             "Crop": translated_crop(r["Crop"], language),
             "Score": r["Score"],
             "Water": translated_value(r["Water Requirement"], language),
+            "NPK Match": r.get("NPK Score", 0),
+            "N Demand": translated_value(r.get("N", "Medium"), language),
+            "P Demand": translated_value(r.get("P", "Medium"), language),
+            "K Demand": translated_value(r.get("K", "Medium"), language),
             "Rainfall Fit": r.get("Rainfall Score", 0),
             "Suitable Soil": translated_soil_list(r["Suitable Soil"], language),
             "Season": translated_season_list(r["Season"], language),
@@ -2380,8 +2495,4 @@ with st.expander("📋 View Alternative Crop Recommendations"):
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
 st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
-<<<<<<< Updated upstream
 st.markdown(f"<div class='footer'>{t['footer']}</div>", unsafe_allow_html=True)
-=======
-st.markdown(f"<div class='footer'>{t['footer']}</div>", unsafe_allow_html=True)
->>>>>>> Stashed changes
